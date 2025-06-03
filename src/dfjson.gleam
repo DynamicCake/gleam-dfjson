@@ -1,5 +1,6 @@
 import gleam/dict
 import gleam/dynamic/decode
+import gleam/int
 import gleam/json
 import gleam/option.{type Option}
 
@@ -42,6 +43,15 @@ pub type ParticleData {
     material: Option(String),
     opacity: Option(Float),
   )
+}
+
+fn int_as_float_decoder() -> decode.Decoder(Float) {
+  use int <- decode.then(decode.int)
+  decode.success(int.to_float(int))
+}
+
+fn number_decoder() -> decode.Decoder(Float) {
+  decode.one_of(number_decoder(), or: [int_as_float_decoder()])
 }
 
 pub fn encode_df_json(df_json: DFJson) -> json.Json {
@@ -212,34 +222,34 @@ pub fn df_json_decoder() -> decode.Decoder(DFJson) {
       decode.success(Str(val:))
     }
     "num" -> {
-      use val <- decode.field("val", decode.float)
+      use val <- decode.field("val", number_decoder())
       decode.success(Num(val:))
     }
     "loc" -> {
-      use x <- decode.field("x", decode.float)
-      use y <- decode.field("y", decode.float)
-      use z <- decode.field("z", decode.float)
-      use pitch <- decode.field("pitch", decode.float)
-      use yaw <- decode.field("yaw", decode.float)
+      use x <- decode.field("x", number_decoder())
+      use y <- decode.field("y", number_decoder())
+      use z <- decode.field("z", number_decoder())
+      use pitch <- decode.field("pitch", number_decoder())
+      use yaw <- decode.field("yaw", number_decoder())
       decode.success(Loc(x:, y:, z:, pitch:, yaw:))
     }
     "vec" -> {
-      use x <- decode.field("x", decode.float)
-      use y <- decode.field("y", decode.float)
-      use z <- decode.field("z", decode.float)
+      use x <- decode.field("x", number_decoder())
+      use y <- decode.field("y", number_decoder())
+      use z <- decode.field("z", number_decoder())
       decode.success(Vec(x:, y:, z:))
     }
     "snd" -> {
       use sound <- decode.field("sound", decode.string)
       use variant <- decode.field("variant", decode.optional(decode.string))
-      use pitch <- decode.field("pitch", decode.float)
-      use volume <- decode.field("volume", decode.float)
+      use pitch <- decode.field("pitch", number_decoder())
+      use volume <- decode.field("volume", number_decoder())
       decode.success(Sound(sound:, variant:, pitch:, volume:))
     }
     "csnd" -> {
       use sound <- decode.field("sound", decode.string)
-      use pitch <- decode.field("pitch", decode.float)
-      use volume <- decode.field("volume", decode.float)
+      use pitch <- decode.field("pitch", number_decoder())
+      use volume <- decode.field("volume", number_decoder())
       decode.success(CustomSound(sound:, pitch:, volume:))
     }
     "particle" -> {
@@ -259,34 +269,34 @@ pub fn df_json_decoder() -> decode.Decoder(DFJson) {
 }
 
 pub fn particle_cluster_decoder() -> decode.Decoder(ParticleCluster) {
-  use horizontal <- decode.field("horizontal", decode.float)
-  use vertical <- decode.field("vertical", decode.float)
+  use horizontal <- decode.field("horizontal", number_decoder())
+  use vertical <- decode.field("vertical", number_decoder())
   use amount <- decode.field("amount", decode.int)
   decode.success(ParticleCluster(horizontal:, vertical:, amount:))
 }
 
 pub fn particle_data_decoder() -> decode.Decoder(ParticleData) {
-  use x <- decode.field("x", decode.optional(decode.float))
-  use y <- decode.field("y", decode.optional(decode.float))
-  use z <- decode.field("z", decode.optional(decode.float))
+  use x <- decode.field("x", decode.optional(number_decoder()))
+  use y <- decode.field("y", decode.optional(number_decoder()))
+  use z <- decode.field("z", decode.optional(number_decoder()))
   use motion_variation <- decode.field(
     "motion_variation",
-    decode.optional(decode.float),
+    decode.optional(number_decoder()),
   )
-  use size <- decode.field("size", decode.optional(decode.float))
+  use size <- decode.field("size", decode.optional(number_decoder()))
   use size_variation <- decode.field(
     "size_variation",
-    decode.optional(decode.float),
+    decode.optional(number_decoder()),
   )
   use color <- decode.field("color", decode.optional(decode.string))
   use color_variation <- decode.field(
     "color_variation",
-    decode.optional(decode.float),
+    decode.optional(number_decoder()),
   )
   use color_fade <- decode.field("color_fade", decode.optional(decode.string))
-  use roll <- decode.field("roll", decode.optional(decode.float))
+  use roll <- decode.field("roll", decode.optional(number_decoder()))
   use material <- decode.field("material", decode.optional(decode.string))
-  use opacity <- decode.field("opacity", decode.optional(decode.float))
+  use opacity <- decode.field("opacity", decode.optional(number_decoder()))
   decode.success(ParticleData(
     x:,
     y:,
