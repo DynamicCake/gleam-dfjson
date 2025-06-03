@@ -1,5 +1,5 @@
 name = "gl_dfjson"
-version = "0.0.1-alpha"
+version = "1.0.0"
 
 description = "A collection of DFJson types, encoders, and decoders for Gleam"
 licences = ["Apache-2.0"]
