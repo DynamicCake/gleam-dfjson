@@ -1,7 +1,7 @@
 name = "gl_dfjson"
 version = "0.0.1-alpha"
 
-description = "A collection of DFJson types, encoders, and decoders for gleam"
+description = "A collection of DFJson types, encoders, and decoders for Gleam"
 licences = ["Apache-2.0"]
 repository = { type = "github", user = "DynamicCake", repo = "gleam-dfjson" }
 links = [{ title = "Main docs", href = "https://dftools.dev/dfjson" }]
