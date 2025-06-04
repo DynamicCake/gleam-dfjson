@@ -51,7 +51,7 @@ fn int_as_float_decoder() -> decode.Decoder(Float) {
 }
 
 fn number_decoder() -> decode.Decoder(Float) {
-  decode.one_of(number_decoder(), or: [int_as_float_decoder()])
+  decode.one_of(decode.float, or: [int_as_float_decoder()])
 }
 
 pub fn encode_df_json(df_json: DFJson) -> json.Json {
